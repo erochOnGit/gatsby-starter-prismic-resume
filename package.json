@@ -3,12 +3,14 @@
   "scripts": {
     "build": "gatsby build",
     "dev": "gatsby develop -o",
+    "start": "npm run dev",
     "serve": "gatsby serve",
     "lint": "eslint . --ext .js,.jsx --ignore-path .gitignore",
     "lint:fix": "eslint . --ext .js,.jsx --fix --ignore-path .gitignore"
   },
   "dependencies": {
     "@emotion/core": "^10.0.7",
+    "@emotion/styled": "^10.0.27",
     "emotion": "^10.0.7",
     "gatsby": "^2.0.118",
     "gatsby-plugin-emotion": "^4.0.3",
@@ -18,7 +20,10 @@
     "prop-types": "^15.7.1",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
-    "react-helmet": "^5.2.0"
+    "react-helmet": "^5.2.0",
+    "react-spring": "^8.0.27",
+    "react-three-fiber": "^4.2.21",
+    "three": "^0.120.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

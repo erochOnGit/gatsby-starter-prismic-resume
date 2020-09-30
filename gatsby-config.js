@@ -1,17 +1,17 @@
-require('dotenv').config({
+require("dotenv").config({
   path: `.env`,
-})
-
+});
+console.log("api key : " + process.env.API_KEY);
 module.exports = {
   plugins: [
-    'gatsby-plugin-react-helmet',
-    'gatsby-plugin-emotion',
+    "gatsby-plugin-react-helmet",
+    "gatsby-plugin-emotion",
     {
-      resolve: 'gatsby-source-prismic',
+      resolve: "gatsby-source-prismic",
       options: {
-        repositoryName: 'resume-test',
+        repositoryName: "emileTemplate",
         accessToken: process.env.API_KEY,
       },
     },
   ],
-}
+};
