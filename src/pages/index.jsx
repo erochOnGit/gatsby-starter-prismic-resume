@@ -1,11 +1,18 @@
-import { graphql } from "gatsby";
-import React, { Suspense, useCallback, useRef, useMemo } from "react";
-import { Canvas, useFrame } from "react-three-fiber";
-import * as THREE from "three";
-import styled from "@emotion/styled";
 import { css, Global } from "@emotion/core";
+import styled from "@emotion/styled";
+import { graphql } from "gatsby";
+import React, { useRef } from "react";
+import { Canvas } from "react-three-fiber";
+import * as THREE from "three";
 import CameraControl from "../utils/CameraControl";
-import Effects from "../components/Swarm/Effects";
+import { CannonProvider } from '../utils/useCannon'
+import { GameProvider } from '../gameScript/Game'
+import PlayerHandler from '../gameScript/Player'
+import GroundHandler from '../gameScript/Ground'
+import Plane from "../components/simple/Plane"
+import Box from "../components/simple/Box"
+import Sphere from "../components/simple/Sphere"
+
 const globalStyle = css`
   html,
   body,
@@ -30,6 +37,7 @@ const Container = styled.div`
   height: 100%;
   background: white;
 `;
+
 const CanvasContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -38,70 +46,11 @@ const CanvasContainer = styled.div`
   left: 0;
 `;
 
-function Swarm({ count, mouse }) {
-  const mesh = useRef();
-  const dummy = useMemo(() => new THREE.Object3D(), []);
-
-  const particles = useMemo(() => {
-    const temp = [];
-    for (let i = 0; i < count; i++) {
-      const t = Math.random() * 100;
-      const factor = 20 + Math.random() * 100;
-      const speed = 0.01 + Math.random() / 200;
-      const xFactor = -20 + Math.random() * 40;
-      const yFactor = -20 + Math.random() * 40;
-      const zFactor = -20 + Math.random() * 40;
-      temp.push({ t, factor, speed, xFactor, yFactor, zFactor, mx: 0, my: 0 });
-    }
-    return temp;
-  }, [count]);
-
-  useFrame((state) => {
-    particles.forEach((particle, i) => {
-      let { t, factor, speed, xFactor, yFactor, zFactor } = particle;
-      t = particle.t += speed / 2;
-      const a = Math.cos(t) + Math.sin(t * 1) / 10;
-      const b = Math.sin(t) + Math.cos(t * 2) / 10;
-      const s = Math.max(1.5, Math.cos(t) * 5);
-      particle.mx += (mouse.current[0] - particle.mx) * 0.02;
-      particle.my += (-mouse.current[1] - particle.my) * 0.02;
-      dummy.position.set(
-        (particle.mx / 10) * a +
-          xFactor +
-          Math.cos((t / 10) * factor) +
-          (Math.sin(t * 1) * factor) / 10,
-        (particle.my / 10) * b +
-          yFactor +
-          Math.sin((t / 10) * factor) +
-          (Math.cos(t * 2) * factor) / 10,
-        (particle.my / 10) * b +
-          zFactor +
-          Math.cos((t / 10) * factor) +
-          (Math.sin(t * 3) * factor) / 10
-      );
-      dummy.scale.set(s, s, s);
-      dummy.updateMatrix();
-      mesh.current.setMatrixAt(i, dummy.matrix);
-    });
-    mesh.current.instanceMatrix.needsUpdate = true;
-  });
-
-  return (
-    <>
-      <instancedMesh ref={mesh} args={[null, null, count]}>
-        <sphereBufferGeometry attach="geometry" args={[1, 32, 32]} />
-        <meshPhongMaterial attach="material" color="white" />
-      </instancedMesh>
-    </>
-  );
-}
-
 function Lights() {
   return (
     <group>
-      <ambientLight intensity={1} />
-      <pointLight position={[100, 100, 100]} intensity={2.2} />
-      <pointLight position={[-100, -100, -100]} intensity={5} color="red" />
+      <pointLight position={[-10, -10, 30]} intensity={0.25} />
+      <spotLight intensity={0.3} position={[30, 30, 50]} angle={0.2} penumbra={1} castShadow />
     </group>
   );
 }
@@ -116,22 +65,39 @@ export default (props) => {
       <h1>{data && data.title.text}</h1>
       <CanvasContainer>
         <Canvas
-          gl={{ alpha: false, antialias: false, logarithmicDepthBuffer: true }}
-          camera={{ fov: 75, position: [0, 0, 70] }}
+          shadowMap
+          camera={{ position: [0, -50,  40] }}
           onCreated={({ gl }) => {
-            gl.setClearColor("white");
-            gl.toneMapping = THREE.ACESFilmicToneMapping;
-            gl.outputEncoding = THREE.sRGBEncoding;
+            gl.toneMapping = THREE.ACESFilmicToneMapping
+            gl.outputEncoding = THREE.sRGBEncoding
           }}
         >
-          <CameraControl />
-          <Lights />
-          <pointLight position={[10, 10, 10]} />
-          {/* <RippleBox position={[0, 0, 0]} /> */}
-          <Swarm mouse={mouse} count={150} />
-          {/* <Suspense fallback={null}>
-            <Effects />
-          </Suspense> */}
+          <GameProvider>
+            <CameraControl/>
+            <Lights />
+            <CannonProvider>
+            <GroundHandler>
+                {({setRef, onClick}) => 
+                  <Plane 
+                    position={[0, 0, -10]} 
+                    setRef={setRef}
+                    onClick={onClick}
+                  />
+                }
+              </GroundHandler>
+              <Box   
+                position={[0.5, 1.0, 20]}
+              />
+              <PlayerHandler>
+                {({setRef}) => 
+                    <Box   
+                      position={[-5.5, -5.0, 30]}
+                      setRef={setRef}
+                    />
+                }
+                </PlayerHandler>
+            </CannonProvider>
+          </GameProvider>
         </Canvas>
       </CanvasContainer>
     </Container>

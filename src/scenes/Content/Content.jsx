@@ -23,6 +23,7 @@ const colors = [
   "lightpink",
   "lightblue",
 ];
+
 const data = new Array(number).fill().map(() => {
   return {
     color: colors[Math.round(Math.random() * (colors.length - 1))],
@@ -48,6 +49,7 @@ function Content() {
       ),
     []
   );
+  
   return data.map((d, index) => (
     <a.mesh key={index} {...springs[index]} castShadow receiveShadow>
       <boxBufferGeometry attach="geometry" args={d.args} />

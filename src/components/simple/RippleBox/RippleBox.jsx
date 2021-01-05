@@ -1,7 +1,7 @@
 import React, { useRef, useState, useMemo } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import * as THREE from "three";
-import GPUSim from "../../utils/GPUSim";
+import GPUSim from "../../../utils/GPUSim";
 
 const getEmptyData = (width, height) => {
   var len = width * height * 3;
