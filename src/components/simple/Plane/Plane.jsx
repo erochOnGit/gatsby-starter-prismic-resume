@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react"
-import { useCannon } from "../../../utils/useCannon"
+import { useCannonAddBody } from "../../../utils/useCannon"
 import * as CANNON from 'cannon'
 
 function Plane({ position, onClick, setRef }) {
     // Register plane as a physics body with zero mass
     const [body] = useState(() => new CANNON.Body({ mass: 0 }))
-    const ref = useCannon(body, body => {
+    const ref = useCannonAddBody(body, body => {
       body.addShape(new CANNON.Plane())
       body.position.set(...position)
     })

@@ -1,6 +1,7 @@
 import React, { useRef, useEffect ,useState } from "react"
 import {useGame} from "../Game"
 import Player from "./Player"
+
 let PlayerHandler = ({children}) => {
     const [player] = useState(new Player({}))
     let bodyRef = useRef(); 
@@ -9,10 +10,6 @@ let PlayerHandler = ({children}) => {
     }
     const {game} = useGame()
     useEffect(()=>{
-        console.log(game, player, bodyRef)
-        // game.addPlayer(
-        // ) 
-        // bodyRef
         player.setBody({body : bodyRef})
         game.addPlayer({player})
     },[])

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import {useCannon} from "../../../utils/useCannon"
+import {useCannonAddBody} from "../../../utils/useCannon"
 import * as CANNON from 'cannon'
 import { useFrame } from "react-three-fiber"
 
@@ -7,7 +7,7 @@ function Sphere({ position, setRef }) {
     // Register Sphere as a physics body with mass
   const [body] = useState(() => new CANNON.Body({ mass: 10000 }))
 
-  const ref = useCannon(body, body => {
+  const ref = useCannonAddBody(body, body => {
     body.addShape(new CANNON.Sphere(1))
     body.position.set(...position)
   })

@@ -1,17 +1,20 @@
 import { css, Global } from "@emotion/core";
 import styled from "@emotion/styled";
 import { graphql } from "gatsby";
-import React, { useRef } from "react";
-import { Canvas } from "react-three-fiber";
+import React, { Suspense, useRef } from "react";
+import { Canvas, useFrame, useLoader } from "react-three-fiber";
 import * as THREE from "three";
 import CameraControl from "../utils/CameraControl";
-import { CannonProvider } from '../utils/useCannon'
-import { GameProvider } from '../gameScript/Game'
-import PlayerHandler from '../gameScript/Player'
-import GroundHandler from '../gameScript/Ground'
-import Plane from "../components/simple/Plane"
-import Box from "../components/simple/Box"
-import Sphere from "../components/simple/Sphere"
+import { CannonProvider } from "../utils/useCannon";
+import { GameProvider } from "../gameScript/Game";
+import PlayerHandler from "../gameScript/Player";
+import GroundHandler from "../gameScript/Ground";
+import Plane from "../components/simple/Plane";
+import Box from "../components/simple/Box";
+import Sphere from "../components/simple/Sphere";
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
+// import model from "../assets/3D/ybot.fbx"
+import Character from "../components/simple/Character";
 
 const globalStyle = css`
   html,
@@ -50,7 +53,13 @@ function Lights() {
   return (
     <group>
       <pointLight position={[-10, -10, 30]} intensity={0.25} />
-      <spotLight intensity={0.3} position={[30, 30, 50]} angle={0.2} penumbra={1} castShadow />
+      <spotLight
+        intensity={0.3}
+        position={[30, 30, 50]}
+        angle={0.2}
+        penumbra={1}
+        castShadow
+      />
     </group>
   );
 }
@@ -66,36 +75,39 @@ export default (props) => {
       <CanvasContainer>
         <Canvas
           shadowMap
-          camera={{ position: [0, -50,  40] }}
+          camera={{ position: [0, -50, 40] }}
           onCreated={({ gl }) => {
-            gl.toneMapping = THREE.ACESFilmicToneMapping
-            gl.outputEncoding = THREE.sRGBEncoding
+            gl.toneMapping = THREE.ACESFilmicToneMapping;
+            gl.outputEncoding = THREE.sRGBEncoding;
           }}
         >
           <GameProvider>
-            <CameraControl/>
+            <CameraControl />
             <Lights />
-            <CannonProvider>
-            <GroundHandler>
-                {({setRef, onClick}) => 
-                  <Plane 
-                    position={[0, 0, -10]} 
+            <CannonProvider debugRenderer={true}>
+              <GroundHandler>
+                {({ setRef, onClick }) => (
+                  <Plane
+                    position={[0, 0, -10]}
                     setRef={setRef}
                     onClick={onClick}
                   />
-                }
+                )}
               </GroundHandler>
-              <Box   
-                position={[0.5, 1.0, 20]}
-              />
-              <PlayerHandler>
-                {({setRef}) => 
-                    <Box   
-                      position={[-5.5, -5.0, 30]}
+              <Box position={[0.5, 1.0, 20]} />
+              <Suspense fallback={null}>
+                <PlayerHandler>
+                  {({ setRef }) => (
+                    <Character
                       setRef={setRef}
+                      scale={[0.05, 0.05, 0.05]}
+                      rotation={[Math.PI / 2, -Math.PI / 2, 0]}
+                      position={[0, -15.0, 25]}
                     />
-                }
+                  )}
                 </PlayerHandler>
+              </Suspense>
+              <Box position={[-5.5, -5.0, 30]} />
             </CannonProvider>
           </GameProvider>
         </Canvas>
