@@ -3,10 +3,16 @@ import * as CANNON from "cannon";
 
 export default class Player {
   constructor({ body }) {
-    this.body = body;
+    this.body = body || {};
     this.position;
     this.speed = 10;
     this.destinationMarker = [];
+
+    if (body) {
+      this.body.toto = true;
+      body.tata = true;
+      console.log(body);
+    }
   }
   setBody({ body }) {
     this.body = body;

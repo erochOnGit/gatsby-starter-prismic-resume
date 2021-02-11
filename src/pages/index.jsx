@@ -8,6 +8,7 @@ import CameraControl from "../utils/CameraControl";
 import { CannonProvider } from "../utils/useCannon";
 import { GameProvider } from "../gameScript/Game";
 import PlayerHandler from "../gameScript/Player";
+import PhysicHandler from "../gameScript/PhysicBody";
 import GroundHandler from "../gameScript/Ground";
 import Plane from "../components/simple/Plane";
 import Box from "../components/simple/Box";
@@ -96,16 +97,20 @@ export default (props) => {
               </GroundHandler>
               <Box position={[0.5, 1.0, 20]} />
               <Suspense fallback={null}>
-                <PlayerHandler>
-                  {({ setRef }) => (
-                    <Character
-                      setRef={setRef}
-                      scale={[0.05, 0.05, 0.05]}
-                      rotation={[Math.PI / 2, -Math.PI / 2, 0]}
-                      position={[0, -15.0, 25]}
-                    />
+                <PhysicHandler position={[0,-15,25]}>
+                  {({ body, bodyRef }) => (
+                    <PlayerHandler body={body} bodyRef={bodyRef}>
+                      {({ bodyRef }) => (
+                        <Character
+                          bodyRef={bodyRef}
+                          scale={[0.05, 0.05, 0.05]}
+                          rotation={[Math.PI / 2, -Math.PI / 2, 0]}
+                          position={[0, -15.0, 25]}
+                        />
+                      )}
+                    </PlayerHandler>
                   )}
-                </PlayerHandler>
+                </PhysicHandler>
               </Suspense>
               <Box position={[-5.5, -5.0, 30]} />
             </CannonProvider>

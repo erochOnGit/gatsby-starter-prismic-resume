@@ -24,7 +24,7 @@ export default class Game {
   setGround({ ground }) {
     this.ground = ground;
   }
-
+//TODO : remove
   MakePlayerBehave({ to }) {
     this.players[0].rotate({ to });
 
