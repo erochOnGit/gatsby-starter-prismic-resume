@@ -14,9 +14,11 @@ import Plane from "../components/simple/Plane";
 import Box from "../components/simple/Box";
 import Sphere from "../components/simple/Sphere";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
-// import model from "../assets/3D/ybot.fbx"
-import Character from "../components/simple/Character";
 
+// import model from "../assets/3D/ybot.fbx"
+// import Character from "../components/simple/Character";
+// import Asset from "../components/simple/Asset";
+import { GameObjectProvider } from "../gameScript/GameObject";
 const globalStyle = css`
   html,
   body,
@@ -65,6 +67,19 @@ function Lights() {
   );
 }
 
+function Asset({ url, position }) {
+  const fbx = useLoader(FBXLoader, url);
+
+  return <primitive position={position} object={fbx} dispose={null} />;
+}
+const Character = ({ position, rotation, scale }) => {
+  const bodyRef = useRef();
+  return (
+    <group dispose={null} position={position} scale={scale} rotation={rotation}>
+      <Asset url={"/3D/walking.fbx"}></Asset>
+    </group>
+  );
+};
 export default (props) => {
   const data = props.data && props.data.allPrismicMarque.nodes[0].data;
   const mouse = useRef([0, 0]);
@@ -97,21 +112,49 @@ export default (props) => {
               </GroundHandler>
               <Box position={[0.5, 1.0, 20]} />
               <Suspense fallback={null}>
-                <PhysicHandler position={[0,-15,25]}>
+                {/* <PhysicHandler position={[0, -15, 25]}>
                   {({ body, bodyRef }) => (
                     <PlayerHandler body={body} bodyRef={bodyRef}>
                       {({ bodyRef }) => (
                         <Character
                           bodyRef={bodyRef}
-                          scale={[0.05, 0.05, 0.05]}
-                          rotation={[Math.PI / 2, -Math.PI / 2, 0]}
                           position={[0, -15.0, 25]}
+                          rotation={[Math.PI / 2, -Math.PI / 2, 0]}
+                          scale={[0.05, 0.05, 0.05]}
                         />
                       )}
                     </PlayerHandler>
                   )}
-                </PhysicHandler>
+                </PhysicHandler> */}
+                {/* <GameObjectProvider> */}
+                <Character
+                  position={[0, 35.0, 25]}
+                  rotation={[Math.PI / 2, -Math.PI / 2, 0]}
+                  scale={[0.05, 0.05, 0.05]}
+                />
+                <Character
+                  position={[0, -35.0, 25]}
+                  rotation={[Math.PI / 2, -Math.PI / 2, 0]}
+                  scale={[0.05, 0.05, 0.05]}
+                />
+                <Character
+                  position={[30, 5.0, 25]}
+                  rotation={[Math.PI / 2, -Math.PI / 2, 0]}
+                  scale={[0.05, 0.05, 0.05]}
+                />
+                <Asset position={[-25, 0, 0]} url={"/3D/ybot.fbx"}></Asset>
+                <Asset position={[-15, 0, 0]} url={"/3D/ybot.fbx"}></Asset>
+                <Asset position={[-5, 0, 0]} url={"/3D/ybot.fbx"}></Asset>
+                <Asset position={[5, 0, 0]} url={"/3D/ybot.fbx"}></Asset>
+                <Asset position={[15, 0, 0]} url={"/3D/ybot.fbx"}></Asset>
+                {/* <Character
+                  position={[-30, -35.0, 25]}
+                  rotation={[Math.PI / 2, -Math.PI / 2, 0]}
+                  scale={[0.05, 0.05, 0.05]}
+                /> */}
+                {/* </GameObjectProvider> */}
               </Suspense>
+
               <Box position={[-5.5, -5.0, 30]} />
             </CannonProvider>
           </GameProvider>

@@ -10,8 +10,8 @@ As it's a component external script.
 It's not meant to be used all the time.
 
 Change all the UseEffect of initialization to useMemo.
-
-current : Have to make player animation for walking.
+current : make a gameobject architecture.
+started : Have to make player animation for walking.
 
 Have to make the world in blender. 
 Maybe check how to render vertices (or alphaing them) while they superposing with the player.

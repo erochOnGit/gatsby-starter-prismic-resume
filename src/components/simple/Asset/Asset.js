@@ -20,26 +20,28 @@ const setAction = ({ toAction, activeAction }) => {
 
 function Asset({ position, rotation, scale, url, animationUrls }) {
   const group = useRef();
-  const [mixer] = useState(() => new THREE.AnimationMixer());
   const fbx = useLoader(FBXLoader, url);
-  let animationsFbx = [];
-  let animationsActions = [];
-  let activeAction = useRef();
-  let lastAction = useRef();
-  for (let i = 0; i < animationUrls.length; i++) {
-    animationsFbx.push(useLoader(FBXLoader, animationUrls[i]));
-  }
-  useEffect(() => {
-    for (let i = 0; i < animationsFbx.length; i++) {
-      animationsActions.push(
-        mixer.clipAction(animationsFbx[i].animations[0], group.current)
-      );
-    }
-    ({ activeAction, lastAction } = setAction({
-      toAction: animationsActions[0],
-      activeAction,
-    }));
-  }, []);
+  // const [mixer] = useState(() => new THREE.AnimationMixer());
+  // let animationsFbx = [];
+  // let animationsActions = [];
+  // let activeAction = useRef();
+  // let lastAction = useRef();
+
+  // for (let i = 0; i < animationUrls.length; i++) {
+  //   animationsFbx.push(useLoader(FBXLoader, animationUrls[i]));
+  // }
+
+  // useEffect(() => {
+  //   for (let i = 0; i < animationsFbx.length; i++) {
+  //     animationsActions.push(
+  //       mixer.clipAction(animationsFbx[i].animations[0], group.current)
+  //     );
+  //   }
+  //   ({ activeAction, lastAction } = setAction({
+  //     toAction: animationsActions[0],
+  //     activeAction,
+  //   }));
+  // }, []);
 
   useMemo(
     () =>
@@ -54,10 +56,10 @@ function Asset({ position, rotation, scale, url, animationUrls }) {
   //   []
   // );
 
-  useFrame((state, delta) => {
-    mixer.update(delta);
-    // console.log(delta);
-  });
+  // useFrame((state, delta) => {
+  //   mixer.update(delta);
+  //   // console.log(delta);
+  // });
 
   return (
     <primitive
