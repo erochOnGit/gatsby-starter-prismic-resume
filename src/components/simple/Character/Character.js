@@ -1,36 +1,33 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState } from "react";
 import { useCannonAddBody } from "../../../utils/useCannon";
 import * as CANNON from "cannon";
 import Asset from "../Asset";
 
-function Character({ position, rotation, scale, bodyRef }) {
-  // // Register Character as a physics body with mass
+const Character = ({ position, rotation, scale, bodyRef }) => {
   // const [body] = useState(() => new CANNON.Body({ mass: 10000 }));
 
-  // const group = useCannonAddBody(body, (body) => {
+  // const myref = useCannonAddBody(body, (body) => {
   //   body.addShape(new CANNON.Box(new CANNON.Vec3(1, 1, 1)));
   //   body.position.set(...position);
   // });
 
-  // useEffect(() => {
-  //   setBodyState && setBodyState({ state: body });
-  // }, []);
-
-  // useEffect(() => {
-  //   console.log("bodyboot", body);
-  // }, [body]);
   return (
-    <group ref={bodyRef} dispose={null}>
+    <group
+      ref={bodyRef}
+      dispose={null}
+      position={position}
+      rotation={rotation}
+      scale={scale}
+    >
       <Asset
         animation={false}
-        position={[0, 0, -1]} //depend on the mesh you're using
-        scale={scale}
-        rotation={rotation}
+        position={[0, 0, -20]} //depend on the mesh you're using
+        rotation={[Math.PI / 2, -Math.PI / 2, 0]} //depend on the mesh you're using
         url={"/3D/walking.fbx"}
-        animationUrls={["/3D/ybot.fbx", "/3D/walking.fbx"]} // make the animation object so that we can access them directly by their names
+        animationUrls={["/3D/ybot.fbx", "/3D/walking.fbx"]}
       ></Asset>
     </group>
   );
-}
+};
 
 export default Character;

@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState, useEffect } from "react";
 import * as THREE from "three";
-import { useFrame, useLoader } from "react-three-fiber";
-import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
+import { useFrame } from "react-three-fiber";
+import { useFBXLoader } from "../../../gameScript/FBXLoader";
 
 //TODO : to put in its own file in utils
 const setAction = ({ toAction, activeAction }) => {
@@ -18,60 +18,63 @@ const setAction = ({ toAction, activeAction }) => {
   return { activeAction, lastAction };
 };
 
-function Asset({ position, rotation, scale, url, animationUrls }) {
-  const group = useRef();
+function Asset({ position, rotation, scale, url, animationUrls = [] }) {
+  //TODO : to put in its own file in utils
+  const [fbx, setFbx] = useState();
+  const assetRef = useRef();
+  const { loader } = useFBXLoader();
   const [mixer] = useState(() => new THREE.AnimationMixer());
-  const fbx = useLoader(FBXLoader, url);
-  let animationsFbx = [];
   let animationsActions = [];
   let activeAction = useRef();
   let lastAction = useRef();
-  for (let i = 0; i < animationUrls.length; i++) {
-    animationsFbx.push(useLoader(FBXLoader, animationUrls[i]));
-  }
-  useEffect(() => {
-    for (let i = 0; i < animationsFbx.length; i++) {
-      animationsActions.push(
-        mixer.clipAction(animationsFbx[i].animations[0], group.current)
-      );
-    }
-    ({ activeAction, lastAction } = setAction({
-      toAction: animationsActions[0],
-      activeAction,
-    }));
-  }, []);
 
+  //loading mesh
+  useEffect(() => void loader.load(url, setFbx), [url]);
+  //shadows
   useMemo(
     () =>
+      fbx &&
       Object.values(fbx.children).forEach(
         (obj) => obj.isMesh && Object.assign(obj, { castShadow: true })
       ),
-    [fbx.children]
+    [fbx?.children]
   );
-
-  // useEffect(
-  //   () => void mixer.clipAction(fbx.animations[0], group.current).play(),
-  //   []
-  // );
+  // loading animations
+  //TODO : make this trigger only when fbx and assetRef are not undefined and animationUrl is not length 0
+  useEffect(() => {
+    if (fbx && assetRef.current) {
+      for (let i = 0; i < animationUrls.length; i++) {
+        console.log("url", url, animationUrls.length, assetRef.current);
+        loader.load(animationUrls[i], (fbx) => {
+          animationsActions.push(
+            mixer.clipAction(fbx.animations[0], assetRef.current)
+          );
+          // console.log(animationsActions[0]);
+          if (animationsActions[0]) {
+            ({ activeAction, lastAction } = setAction({
+              toAction: animationsActions[0],
+              activeAction,
+            }));
+          }
+        });
+      }
+    }
+  }, [fbx, assetRef.current]);
 
   useFrame((state, delta) => {
     mixer.update(delta);
-    // console.log(delta);
   });
 
-  return (
+  return fbx ? (
     <primitive
-      ref={group}
+      ref={assetRef}
       position={position}
       rotation={rotation}
       scale={scale}
-      scale={scale}
-      castShadow
-      receiveShadow
       object={fbx}
       dispose={null}
     />
-  );
+  ) : null;
 }
 
 export default Asset;

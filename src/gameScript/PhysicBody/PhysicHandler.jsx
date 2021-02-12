@@ -4,7 +4,7 @@ import { useCannonAddBody } from "../../utils/useCannon";
 import * as CANNON from "cannon";
 // import Player from "./Player";
 
-let PhysicHandler = ({ children, position }) => {
+let PhysicHandler = ({ children, position, rotation }) => {
   // Register Character as a physics body with mass
   const [body] = useState(() => new CANNON.Body({ mass: 10000 }));
 
