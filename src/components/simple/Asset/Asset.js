@@ -44,12 +44,10 @@ function Asset({ position, rotation, scale, url, animationUrls = [] }) {
   useEffect(() => {
     if (fbx && assetRef.current) {
       for (let i = 0; i < animationUrls.length; i++) {
-        console.log("url", url, animationUrls.length, assetRef.current);
         loader.load(animationUrls[i], (fbx) => {
           animationsActions.push(
             mixer.clipAction(fbx.animations[0], assetRef.current)
           );
-          // console.log(animationsActions[0]);
           if (animationsActions[0]) {
             ({ activeAction, lastAction } = setAction({
               toAction: animationsActions[0],

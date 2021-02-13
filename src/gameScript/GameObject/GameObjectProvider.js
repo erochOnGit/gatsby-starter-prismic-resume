@@ -1,18 +1,22 @@
 import React, { useState, useContext } from "react";
-import GameObject from "./GameObject";
-import { useFrame } from "react-three-fiber";
 
 const GameObjectContext = React.createContext();
 
 export function GameObjectProvider({ children }) {
-  const [gameObject] = useState(new GameObject());
-  useFrame((state, delta) => {
-    gameObject.update();
-  });
-  return <GameObjectContext.Provider value={gameObject} children={children} />;
+  //TODO : have a state for the function to update with useframe ?
+  const [attributes, setAttributes] = useState({});
+  const attributesHandler = ({ att }) => {
+    setAttributes(Object.assign(new Object(), attributes, att));
+  };
+  return (
+    <GameObjectContext.Provider
+      value={{ attributes, attributesHandler }}
+      children={children}
+    />
+  );
 }
 
 export function useGameObject() {
-  const gameObject = useContext(GameObjectContext);
-  return { gameObject };
+  const { attributes, attributesHandler } = useContext(GameObjectContext);
+  return { attributes, attributesHandler };
 }

@@ -24,15 +24,4 @@ export default class Game {
   setGround({ ground }) {
     this.ground = ground;
   }
-//TODO : remove
-  MakePlayerBehave({ to }) {
-    this.players[0].rotate({ to });
-
-    this.players[0].moveForward();
-  }
-  update() {
-    for (let i = 0; i < this.players.length; i++) {
-      this.players[i].update();
-    }
-  }
 }

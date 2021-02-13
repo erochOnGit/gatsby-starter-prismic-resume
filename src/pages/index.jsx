@@ -14,7 +14,7 @@ import { FBXLoaderProvider } from "../gameScript/FBXLoader";
 import Plane from "../components/simple/Plane";
 import Box from "../components/simple/Box";
 import Character from "../components/simple/Character";
-import { GameObjectProvider } from "../gameScript/GameObject";
+import GameObject, { GameObjectProvider } from "../gameScript/GameObject";
 const globalStyle = css`
   html,
   body,
@@ -95,20 +95,12 @@ export default (props) => {
                 </GroundHandler>
                 <Box position={[0.5, 1.0, 20]} />
                 <Suspense fallback={null}>
-                  {/* </GameObjectProvider> */}
-                  <PhysicHandler position={[0, -15, 25]}>
-                    {({ body, bodyRef }) => (
-                      <PlayerHandler body={body} bodyRef={bodyRef}>
-                        {({ bodyRef }) => (
-                          <Character
-                            bodyRef={bodyRef}
-                            scale={[0.05, 0.05, 0.05]}
-                          />
-                        )}
-                      </PlayerHandler>
-                    )}
-                  </PhysicHandler>
-                  {/* <GameObjectProvider> */}
+                  {/* //TODO : faire le test avec plusieurs gameObject et ensuite faire l'animation au déplacement du perso */}
+                  <GameObjectProvider>
+                    <Character scale={[0.05, 0.05, 0.05]} />
+                    <PlayerHandler />
+                    <PhysicHandler position={[0, -15, 25]} />
+                  </GameObjectProvider>
                 </Suspense>
                 <Box position={[-5.5, -5.0, 30]} />
               </CannonProvider>

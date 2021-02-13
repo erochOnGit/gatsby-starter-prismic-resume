@@ -1,19 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useCannonAddBody } from "../../../utils/useCannon";
 import * as CANNON from "cannon";
 import Asset from "../Asset";
+import { useGameObject } from "../../../gameScript/GameObject";
 
-const Character = ({ position, rotation, scale, bodyRef }) => {
-  // const [body] = useState(() => new CANNON.Body({ mass: 10000 }));
-
-  // const myref = useCannonAddBody(body, (body) => {
-  //   body.addShape(new CANNON.Box(new CANNON.Vec3(1, 1, 1)));
-  //   body.position.set(...position);
-  // });
-
+const Character = ({ position, rotation, scale }) => {
+  const { attributes } = useGameObject();
   return (
     <group
-      ref={bodyRef}
+      ref={attributes.bodyRef}
       dispose={null}
       position={position}
       rotation={rotation}
