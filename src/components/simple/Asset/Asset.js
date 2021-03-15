@@ -3,31 +3,24 @@ import * as THREE from "three";
 import { useFrame } from "react-three-fiber";
 import { useFBXLoader } from "../../../gameScript/FBXLoader";
 
-//TODO : to put in its own file in utils
-const setAction = ({ toAction, activeAction }) => {
-  let lastAction;
-  if (toAction != activeAction.current) {
-    lastAction = activeAction;
-    activeAction.current = toAction;
-    lastAction.current.stop();
-    //lastAction.fadeOut(1)
-    activeAction.current.reset();
-    //activeAction.fadeIn(1)
-    activeAction.current.play();
-  }
-  return { activeAction, lastAction };
-};
-
-function Asset({ position, rotation, scale, url, animationUrls = [] }) {
+function Asset({
+  position,
+  rotation,
+  scale,
+  url,
+  animationUrls = [],
+  animationId = 0,
+  startingPoint,
+  currentPoint,
+}) {
   //TODO : to put in its own file in utils
   const [fbx, setFbx] = useState();
   const assetRef = useRef();
   const { loader } = useFBXLoader();
   const [mixer] = useState(() => new THREE.AnimationMixer());
-  let animationsActions = [];
-  let activeAction = useRef();
-  let lastAction = useRef();
-
+  let animationsActions = useRef([]);
+  let [activeAction, setActiveAction] = useState();
+  let [lastAction, setLastAction] = useState();
   //loading mesh
   useEffect(() => void loader.load(url, setFbx), [url]);
   //shadows
@@ -44,23 +37,60 @@ function Asset({ position, rotation, scale, url, animationUrls = [] }) {
   useEffect(() => {
     if (fbx && assetRef.current) {
       for (let i = 0; i < animationUrls.length; i++) {
+        // console.log("arf", i, animationUrls[i]);
         loader.load(animationUrls[i], (fbx) => {
-          animationsActions.push(
-            mixer.clipAction(fbx.animations[0], assetRef.current)
+          animationsActions.current[i] = mixer.clipAction(
+            fbx.animations[0],
+            assetRef.current
           );
-          if (animationsActions[0]) {
-            ({ activeAction, lastAction } = setAction({
-              toAction: animationsActions[0],
-              activeAction,
-            }));
-          }
         });
       }
     }
   }, [fbx, assetRef.current]);
 
+  useEffect(() => {
+    if (animationsActions.current[animationId] != activeAction) {
+      setLastAction(activeAction);
+      setActiveAction(animationsActions.current[animationId]);
+    }
+  }, [animationId]);
+  useEffect(() => {
+    if (activeAction && lastAction) {
+      lastAction.fadeOut(1);
+      activeAction.reset();
+      activeAction.fadeIn(1);
+      activeAction.play();
+    }
+  }, [activeAction]);
+  let distanceBetweenTwoPoint = (xa, ya, xb, yb) => {
+    return Math.sqrt(Math.pow(xa - xb, 2) + Math.pow(ya - yb, 2));
+  };
+  let nbr = 0;
   useFrame((state, delta) => {
-    mixer.update(delta);
+    //différence entre la distance et la distance précedente
+    if (currentPoint && startingPoint) {
+      if (
+        Math.round(
+          distanceBetweenTwoPoint(
+            currentPoint.x,
+            currentPoint.y,
+            startingPoint.x,
+            startingPoint.y
+          )*10 % 8
+        ) == 0
+      ) {
+        console.log("meh");
+        mixer.update(10);
+        nbr = Math.round(
+          distanceBetweenTwoPoint(
+            currentPoint.x,
+            currentPoint.y,
+            startingPoint.x,
+            startingPoint.y
+          ) % 16
+        );
+      }
+    }
   });
 
   return fbx ? (

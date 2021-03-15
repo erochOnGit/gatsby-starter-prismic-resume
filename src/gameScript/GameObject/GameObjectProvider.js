@@ -6,7 +6,7 @@ export function GameObjectProvider({ children }) {
   //TODO : have a state for the function to update with useframe ?
   const [attributes, setAttributes] = useState({});
   const attributesHandler = ({ att }) => {
-    setAttributes(Object.assign(new Object(), attributes, att));
+    setAttributes(Object.assign({}, attributes, att));
   };
   return (
     <GameObjectContext.Provider

@@ -1,7 +1,6 @@
 import React, { Suspense, useRef, useState, useEffect, useMemo } from "react";
 import { graphql } from "gatsby";
-import { css, Global } from "@emotion/core";
-import styled from "@emotion/styled";
+import { Global } from "@emotion/core";
 import * as THREE from "three";
 import { Canvas, useFrame, useLoader, useThree } from "react-three-fiber";
 import CameraControl from "../utils/CameraControl";
@@ -15,39 +14,9 @@ import Plane from "../components/simple/Plane";
 import Box from "../components/simple/Box";
 import Character from "../components/simple/Character";
 import GameObject, { GameObjectProvider } from "../gameScript/GameObject";
-const globalStyle = css`
-  html,
-  body,
-  h1,
-  #___gatsby,
-  #gatsby-focus-wrapper {
-    margin: 0;
-    padding: 0;
-    border: 0;
-  }
-  html,
-  body,
-  #___gatsby,
-  #gatsby-focus-wrapper {
-    width: 100vw;
-    height: 100vh;
-  }
-`;
-
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  background: white;
-`;
-
-const CanvasContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-`;
-
+import { globalStyle, Container, CanvasContainer } from "./style";
+import { pageQuery } from "./fragment";
+import RippleBox from "../components/simple/RippleBox";
 function Lights() {
   return (
     <group>
@@ -96,15 +65,21 @@ export default (props) => {
                 <Box position={[0.5, 1.0, 20]} />
                 <Suspense fallback={null}>
                   {/* //TODO : faire le test avec plusieurs gameObject et ensuite faire l'animation au déplacement du perso */}
-                  <GameObjectProvider>
+                  {/* <GameObjectProvider>
                     <Character scale={[0.05, 0.05, 0.05]} />
                     <PlayerHandler />
                     <PhysicHandler position={[0, -15, 25]} />
+                  </GameObjectProvider> */}
+                  <GameObjectProvider>
+                    <Character scale={[0.1, 0.1, 0.1]} />
+                    <PlayerHandler />
+                    <PhysicHandler position={[0, 0, 25]} />
                   </GameObjectProvider>
                 </Suspense>
                 <Box position={[-5.5, -5.0, 30]} />
               </CannonProvider>
             </GameProvider>
+            <RippleBox position={[-0, -5.0, 12]} />
           </FBXLoaderProvider>
         </Canvas>
       </CanvasContainer>
@@ -112,19 +87,4 @@ export default (props) => {
   );
 };
 
-export const pageQuery = graphql`
-  query MyQuery {
-    allPrismicMarque {
-      nodes {
-        data {
-          title {
-            text
-          }
-          reinsurance {
-            text
-          }
-        }
-      }
-    }
-  }
-`;
+export { pageQuery };

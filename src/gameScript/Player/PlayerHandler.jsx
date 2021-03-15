@@ -8,25 +8,47 @@ import * as CANNON from "cannon";
 //TODO : refactor all the attributes into only theirs names
 let PlayerHandler = ({ children }) => {
   const { game } = useGame();
-  const { attributes, attributesHandler} = useGameObject();
-  const player = useRef({
+  const { attributes, attributesHandler } = useGameObject();
+  const [player, setPlayer] = useState({
     destinationMarker: [],
     speed: 10,
-    setDestinationMarker,
+    setDestinationMarker: () => {},
+    startingPosition: attributes?.body
+      ? new THREE.Vector3(
+          attributes.body.position.x,
+          attributes.body.position.y,
+          attributes.body.position.z
+        )
+      : null,
   });
-  const { destinationMarker, speed } = player.current;
-  const setDestinationMarker = ({ destination }) => {
+  const { destinationMarker, speed } = player;
+
+  player.setDestinationMarker = ({ destination }) => {
     if (destinationMarker.length < 1) {
       destinationMarker.push(destination);
+      setPlayer({ ...player, destinationMarker });
       rotate({ to: destinationMarker[0] });
     }
     if (destinationMarker.length >= 1) {
       destinationMarker.shift();
       destinationMarker.push(destination);
+      setPlayer({ ...player, destinationMarker });
       rotate({ to: destinationMarker[0] });
     }
+    setPlayer({
+      ...player,
+      startingPosition: new THREE.Vector3(
+        attributes.body.position.x,
+        attributes.body.position.y,
+        attributes.body.position.z
+      ),
+    });
+    console.log("niek\n\n\n");
+    // console.log(player.startingPosition);
+    console.log(attributes.body.position.x);
+    console.log("\n\n\nniek");
   };
-  player.current.setDestinationMarker = setDestinationMarker;
+
   const rotate = ({ to }) => {
     let from = attributes.body.position;
     let distance = new THREE.Vector3(from.x, from.y, from.z).sub(to);
@@ -39,6 +61,7 @@ let PlayerHandler = ({ children }) => {
       .normalize();
     attributes.body.quaternion.setFromAxisAngle(rotationAxis, rotationAngle);
   };
+
   const moveForward = () => {
     var localForward = new CANNON.Vec3(-1, 0, 0);
     var worldForward = new CANNON.Vec3();
@@ -56,7 +79,6 @@ let PlayerHandler = ({ children }) => {
       Math.pow(attributes.body.position.x - destination.x, 2) +
         Math.pow(attributes.body.position.y - destination.y, 2)
     );
-
     return distance < 0.85 && distance > -0.85;
   };
   const update = () => {
@@ -64,22 +86,26 @@ let PlayerHandler = ({ children }) => {
       moveForward();
       if (isCloseWith({ destination: destinationMarker[0] })) {
         destinationMarker.shift();
+        setPlayer({ ...player, destinationMarker, startingPosition: null });
       }
     }
   };
-
   useEffect(() => {
     if (attributes.body) {
       attributes.body.angularDamping = 1;
     }
-    game.addPlayer({ player: player.current });
+    game.addPlayer({ player: player });
   }, [attributes]);
+  useEffect(() => {
+    // console.log("uo", player.destinationMarker.length);
+    attributesHandler({ att: { player: player } });
+  }, [player.destinationMarker.length, player.startingPosition]);
   useEffect(() => {
     document.addEventListener(
       "keydown",
       (event) => {
         if (event.key === "Enter") {
-          //In event you can access intersection point and others porperties
+          //In event you can access intersection point and others properties
         }
       },
       false
@@ -87,6 +113,7 @@ let PlayerHandler = ({ children }) => {
   });
   useFrame((state, delta) => {
     update();
+    // console.log(player.destinationMarker.length);
   });
   return <>{children}</>;
 };
