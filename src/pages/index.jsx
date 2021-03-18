@@ -7,7 +7,7 @@ import CameraControl from "../utils/CameraControl";
 import { CannonProvider } from "../utils/useCannon";
 import { GameProvider } from "../gameScript/Game";
 import PlayerHandler from "../gameScript/Player";
-import PhysicHandler from "../gameScript/PhysicBody";
+import PhysicHandler from "../gameScript/PhysicHandler";
 import GroundHandler from "../gameScript/Ground";
 import { FBXLoaderProvider } from "../gameScript/FBXLoader";
 import Plane from "../components/simple/Plane";
@@ -17,6 +17,7 @@ import GameObject, { GameObjectProvider } from "../gameScript/GameObject";
 import { globalStyle, Container, CanvasContainer } from "./style";
 import { pageQuery } from "./fragment";
 import RippleBox from "../components/simple/RippleBox";
+import MovingCharacter from "../scenes/MovingCharacter/MovingCharacter";
 function Lights() {
   return (
     <group>
@@ -53,33 +54,9 @@ export default (props) => {
               <CameraControl />
               <Lights />
               <CannonProvider debugRenderer={true}>
-                <GroundHandler>
-                  {({ setRef, onClick }) => (
-                    <Plane
-                      position={[0, 0, -10]}
-                      setRef={setRef}
-                      onClick={onClick}
-                    />
-                  )}
-                </GroundHandler>
-                <Box position={[0.5, 1.0, 20]} />
-                <Suspense fallback={null}>
-                  {/* //TODO : faire le test avec plusieurs gameObject et ensuite faire l'animation au déplacement du perso */}
-                  {/* <GameObjectProvider>
-                    <Character scale={[0.05, 0.05, 0.05]} />
-                    <PlayerHandler />
-                    <PhysicHandler position={[0, -15, 25]} />
-                  </GameObjectProvider> */}
-                  <GameObjectProvider>
-                    <Character scale={[0.1, 0.1, 0.1]} />
-                    <PlayerHandler />
-                    <PhysicHandler position={[0, 0, 25]} />
-                  </GameObjectProvider>
-                </Suspense>
-                <Box position={[-5.5, -5.0, 30]} />
+                <MovingCharacter />
               </CannonProvider>
             </GameProvider>
-            <RippleBox position={[-0, -5.0, 12]} />
           </FBXLoaderProvider>
         </Canvas>
       </CanvasContainer>

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useGame } from "../Game";
 import { useGameObject } from "../GameObject";
 import { useFrame } from "react-three-fiber";
@@ -13,41 +13,41 @@ let PlayerHandler = ({ children }) => {
     destinationMarker: [],
     speed: 10,
     setDestinationMarker: () => {},
-    startingPosition: attributes?.body
+  });
+  const [startingPosition, setStartingPosition] = useState(
+    attributes.body
       ? new THREE.Vector3(
           attributes.body.position.x,
           attributes.body.position.y,
           attributes.body.position.z
         )
-      : null,
-  });
+      : "jeanmichel"
+  );
+  
   const { destinationMarker, speed } = player;
-
-  player.setDestinationMarker = ({ destination }) => {
-    if (destinationMarker.length < 1) {
-      destinationMarker.push(destination);
-      setPlayer({ ...player, destinationMarker });
-      rotate({ to: destinationMarker[0] });
-    }
-    if (destinationMarker.length >= 1) {
-      destinationMarker.shift();
-      destinationMarker.push(destination);
-      setPlayer({ ...player, destinationMarker });
-      rotate({ to: destinationMarker[0] });
-    }
-    setPlayer({
-      ...player,
-      startingPosition: new THREE.Vector3(
+  player.setDestinationMarker = useCallback(
+    ({ destination }) => {
+      let startPosition = new THREE.Vector3(
         attributes.body.position.x,
         attributes.body.position.y,
         attributes.body.position.z
-      ),
-    });
-    console.log("niek\n\n\n");
-    // console.log(player.startingPosition);
-    console.log(attributes.body.position.x);
-    console.log("\n\n\nniek");
-  };
+      );
+      if (destinationMarker.length < 1) {
+        destinationMarker.push(destination);
+        setPlayer({ ...player, destinationMarker });
+        setStartingPosition(startPosition);
+        rotate({ to: destinationMarker[0] });
+      }
+      if (destinationMarker.length >= 1) {
+        destinationMarker.shift();
+        destinationMarker.push(destination);
+        setPlayer({ ...player, destinationMarker });
+        setStartingPosition(startPosition);
+        rotate({ to: destinationMarker[0] });
+      }
+    },
+    [destinationMarker, attributes, attributes.body]
+  );
 
   const rotate = ({ to }) => {
     let from = attributes.body.position;
@@ -70,10 +70,10 @@ let PlayerHandler = ({ children }) => {
       worldForward
     );
     // forward.z = 0;
-    //TODO : keep in mind that delta must be added
+    //TODO : keep in mind that deltatime must be used for movement
     forward.mult(speed, attributes.body.velocity);
   };
-  // //TODO : Math compute doable in shader ?
+  // TODO : Math compute doable in shader ?
   const isCloseWith = ({ destination }) => {
     let distance = Math.sqrt(
       Math.pow(attributes.body.position.x - destination.x, 2) +
@@ -86,7 +86,11 @@ let PlayerHandler = ({ children }) => {
       moveForward();
       if (isCloseWith({ destination: destinationMarker[0] })) {
         destinationMarker.shift();
-        setPlayer({ ...player, destinationMarker, startingPosition: null });
+        setPlayer({
+          ...player,
+          destinationMarker,
+        });
+        // setStartingPosition(null);
       }
     }
   };
@@ -97,9 +101,10 @@ let PlayerHandler = ({ children }) => {
     game.addPlayer({ player: player });
   }, [attributes]);
   useEffect(() => {
-    // console.log("uo", player.destinationMarker.length);
-    attributesHandler({ att: { player: player } });
-  }, [player.destinationMarker.length, player.startingPosition]);
+    attributesHandler({
+      att: { player: player, startingPosition },
+    });
+  }, [player.destinationMarker.length, startingPosition]);
   useEffect(() => {
     document.addEventListener(
       "keydown",
@@ -113,7 +118,6 @@ let PlayerHandler = ({ children }) => {
   });
   useFrame((state, delta) => {
     update();
-    // console.log(player.destinationMarker.length);
   });
   return <>{children}</>;
 };

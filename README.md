@@ -5,14 +5,20 @@ Done : Have to make player animation for walking.
 Done : Have to make physics handlers ? 
 As it's a component external script. 
 It's not meant to be used all the time.
+Done : Make player stop whe he arrive at a destination.
 
 * Have to make the world in blender.  
 
 * Have this fog thing making world looks cool.  
 ```
+current : Extract animation from asset component
 current : Make gallery.  
-current : Make player stop whe he arrive at a destination.
 ```
+
+* have multiple gameObject  
+
+* make the animation frame rate more regular. 
+
 * then make articles pages.  
 
 * Record the place of the player where it come from first now animation is canceled when the player click during a travel.
@@ -27,3 +33,11 @@ actual allow to create only box
 * Change all the UseEffect of initialization to useMemo.
 
 * Maybe check how to render vertices (or alphaing them) while they superposing with the player.
+
+Idea for a game : 
+A character that want to play games.  
+And his surroundings telling him to get out of numeric world.   
+The game is showing that even if he spend time on the numeric,  
+he is part of the world as the person that are not on the numeric.  
+So much that he finish to care more for the environmental issues than the "normal poeple".  
+And he finish to be able to do more for the planet than anyone around him.  
