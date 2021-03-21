@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useState } from "react";
 import Asset from "../Asset";
 import { useGameObject } from "../../../gameScript/GameObject";
+import * as THREE from "three";
 
 const Character = ({ position, rotation, scale }) => {
   const { attributesHandler, attributes } = useGameObject();
-  const [body, setBody] = useState();
+  const [body, setBody] = useState(new THREE.Object3D());
   //initialization of bodyRef.
   //Might be recreated via another script
   //here in order to push it in gameobject from the start

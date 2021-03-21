@@ -21,10 +21,14 @@ const Gallery = () => {
       <RippleBox position={[-0, -5.0, 12]} />
       <Player />
       <Suspense fallback={null}>
-        <GameObjectProvider>
-          <ArtWork />
-          <RotationHandler />
-        </GameObjectProvider>
+        {new Array(300).fill().map((elt, index) => (
+          <GameObjectProvider>
+            <ArtWork
+              position={[Math.sin(index) * index, Math.cos(index) * index, 0]}
+            />
+            <RotationHandler />
+          </GameObjectProvider>
+        ))}
       </Suspense>
     </>
   );

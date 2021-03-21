@@ -1,31 +1,31 @@
 import React, { useRef, useEffect, useState } from "react";
-import { useCannonAddBody, useCannonWorld } from "../../utils/useCannon";
+import { useCannonWorld } from "../../utils/useCannon";
 import * as CANNON from "cannon";
 import { useGameObject, useBodyRef } from "../GameObject";
-import { useFrame } from "react-three-fiber";
+import * as THREE from "three";
 
 let PhysicHandler = ({ children, position, rotation }) => {
   const { attributesHandler, attributes } = useGameObject();
   const { body, setBody } = attributes;
   const world = useCannonWorld();
   //TODO : check a way to put this ref into useBodyRef of GameObject
-  let bodyRef = useRef();
 
   useEffect(() => {
-    if (!body && setBody) {
+    if ((!body || body.constructor === THREE.Object3D) && setBody) {
       setBody(() => new CANNON.Body({ mass: 10000 }));
     }
   }, [setBody]);
 
-  useBodyRef(
-    bodyRef,
+  const bodyRef = useBodyRef(
     body,
-    (body) => {
-      body.addShape(new CANNON.Box(new CANNON.Vec3(1, 1, 1)));
-      body.position.set(...position);
-      world.addBody(body);
-      return () => world.removeBody(body);
-    },
+    body && body.constructor !== THREE.Object3D
+      ? (body) => {
+          body.addShape(new CANNON.Box(new CANNON.Vec3(1, 1, 1)));
+          body.position.set(...position);
+          world.addBody(body);
+          return () => world.removeBody(body);
+        }
+      : null,
     [body]
   );
 

@@ -57,11 +57,12 @@ export function useGameObject() {
 }
 
 // Custom hook to maintain ref body for gameObject
-export function useBodyRef(ref, body, effect, deps = []) {
+export function useBodyRef(body, effect, deps = []) {
+  let ref = useRef();
   // Instanciate things
   useEffect(() => {
-    if (body) {
-      // Execute initialization code and get the unmount function 
+    if (body && effect) {
+      // Execute initialization code and get the unmount function
       return effect(body);
     }
   }, deps);
@@ -74,4 +75,5 @@ export function useBodyRef(ref, body, effect, deps = []) {
       ref.current.quaternion.copy(body.quaternion);
     }
   });
+  return ref;
 }

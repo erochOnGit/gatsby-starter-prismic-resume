@@ -7,16 +7,17 @@ As it's a component external script.
 It's not meant to be used all the time._  
 _Done : Make player stop whe he arrive at a destination._  
 _Done : Extract animation from asset component._
+Done : Make gallery.
 
 - Have to make the world in blender.
 
 - Have this fog thing making world looks cool.
 
-```
-current : Make gallery.
+- Have shader on gallery tiles
+
 ```
 
-- rename player gamescript to playerHandler
+```
 
 - have multiple gameObject
 
