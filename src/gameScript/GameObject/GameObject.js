@@ -5,6 +5,8 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
+import { useGame } from "../Game";
+import { useFrame } from "react-three-fiber";
 
 const GameObjectContext = React.createContext();
 
@@ -13,6 +15,9 @@ export function GameObjectProvider({ children }) {
   const [attributes, setAttributes] = useState({});
   const [shouldUpdateAttribute, setShouldUpdateAttribute] = useState(false);
   const attributesTab = useRef([]);
+  const { bodyRef } = attributes;
+  const { game } = useGame();
+
   const attributesHandler = useCallback(({ att }) => {
     attributesTab.current.push(att);
     setShouldUpdateAttribute(true);
@@ -33,6 +38,11 @@ export function GameObjectProvider({ children }) {
     }
   }, [shouldUpdateAttribute]);
 
+  useEffect(() => {
+    if (bodyRef) {
+      game.addMesh({ meshRef: bodyRef });
+    }
+  }, [bodyRef]);
   return (
     <GameObjectContext.Provider
       value={{ attributes, attributesHandler }}
@@ -44,4 +54,24 @@ export function GameObjectProvider({ children }) {
 export function useGameObject() {
   const { attributes, attributesHandler } = useContext(GameObjectContext);
   return { attributes, attributesHandler };
+}
+
+// Custom hook to maintain ref body for gameObject
+export function useBodyRef(ref, body, effect, deps = []) {
+  // Instanciate things
+  useEffect(() => {
+    if (body) {
+      // Execute initialization code and get the unmount function 
+      return effect(body);
+    }
+  }, deps);
+
+  // update information from state to ref.
+  useFrame(() => {
+    if (ref.current && body) {
+      // Transport state infos into the referenced object
+      ref.current.position.copy(body.position);
+      ref.current.quaternion.copy(body.quaternion);
+    }
+  });
 }

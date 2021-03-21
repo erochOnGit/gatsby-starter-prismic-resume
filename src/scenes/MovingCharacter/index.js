@@ -1,1 +1,3 @@
-export { MovingCharacter as default } from "./MovingCharacter";
+import MovingCharacter from "./MovingCharacter";
+
+export default MovingCharacter;

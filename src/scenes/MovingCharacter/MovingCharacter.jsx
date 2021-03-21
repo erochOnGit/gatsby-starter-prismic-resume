@@ -1,5 +1,4 @@
 import React, { Suspense } from "react";
-import { CannonProvider } from "../../utils/useCannon";
 import PlayerHandler from "../../gameScript/Player";
 import PhysicHandler from "../../gameScript/PhysicHandler";
 import AnimationHandler from "../../gameScript/Animation";
@@ -13,6 +12,7 @@ import RippleBox from "../../components/simple/RippleBox";
 const MovingCharacter = () => {
   return (
     <>
+      {/* <fog attach="fog" args={["black", 30, 100]} /> */}
       <GroundHandler>
         {({ setRef, onClick }) => (
           <Plane position={[0, 0, -10]} setRef={setRef} onClick={onClick} />
@@ -25,6 +25,15 @@ const MovingCharacter = () => {
             animationUrls={["/3D/idle.fbx", "/3D/walking.fbx"]}
           />
           <PhysicHandler position={[0, 0, 25]} />
+          <PlayerHandler />
+        </GameObjectProvider>
+        <GameObjectProvider>
+          <Character scale={[0.1, 0.1, 0.1]} />
+          <AnimationHandler
+            animationUrls={["/3D/idle.fbx", "/3D/walking.fbx"]}
+          />
+          <PhysicHandler position={[0, 5, 25]} />
+          {/* TODO : make the game handle multiple players ? */}
           <PlayerHandler />
         </GameObjectProvider>
       </Suspense>

@@ -1,3 +1,3 @@
-import {GameObjectProvider, useGameObject} from "./GameObjectProvider"
+import { GameObjectProvider, useGameObject, useBodyRef } from "./GameObject";
 
-export {GameObjectProvider, useGameObject}
+export { GameObjectProvider, useGameObject, useBodyRef };

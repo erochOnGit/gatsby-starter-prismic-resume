@@ -29,7 +29,11 @@ export function CannonProvider({ children, debugRenderer = false }) {
   // Distribute world via context
   return <CannonContext.Provider value={world} children={children} />;
 }
+export function useCannonWorld() {
+  return useContext(CannonContext);
+}
 
+//TODO : OLD TO BE REMOVE
 // Custom hook to maintain a world physics body
 export function useCannonAddBody(body, fn, deps = []) {
   const ref = useRef();

@@ -42,7 +42,6 @@ function Content() {
       void setInterval(
         () =>
           set((i) => {
-            console.log(i, random(i));
             return { ...random(i), delay: i * 40 };
           }),
         4000

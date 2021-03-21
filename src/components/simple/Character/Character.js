@@ -1,13 +1,25 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Asset from "../Asset";
 import { useGameObject } from "../../../gameScript/GameObject";
 
 const Character = ({ position, rotation, scale }) => {
   const { attributesHandler, attributes } = useGameObject();
+  const [body, setBody] = useState();
+  //initialization of bodyRef.
+  //Might be recreated via another script
+  //here in order to push it in gameobject from the start
   const bodyRef = useRef();
+
   useEffect(() => {
-    attributesHandler({ att: { bodyRef: bodyRef } });
+    attributesHandler({
+      att: { bodyRef: bodyRef, setBody: setBody },
+    });
   }, []);
+  useEffect(() => {
+    attributesHandler({
+      att: { body: body },
+    });
+  }, [body]);
 
   return (
     <group

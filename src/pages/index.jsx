@@ -1,23 +1,16 @@
-import React, { Suspense, useRef, useState, useEffect, useMemo } from "react";
-import { graphql } from "gatsby";
+import React, { useRef } from "react";
 import { Global } from "@emotion/core";
 import * as THREE from "three";
 import { Canvas, useFrame, useLoader, useThree } from "react-three-fiber";
 import CameraControl from "../utils/CameraControl";
 import { CannonProvider } from "../utils/useCannon";
 import { GameProvider } from "../gameScript/Game";
-import PlayerHandler from "../gameScript/Player";
-import PhysicHandler from "../gameScript/PhysicHandler";
-import GroundHandler from "../gameScript/Ground";
 import { FBXLoaderProvider } from "../gameScript/FBXLoader";
-import Plane from "../components/simple/Plane";
-import Box from "../components/simple/Box";
-import Character from "../components/simple/Character";
-import GameObject, { GameObjectProvider } from "../gameScript/GameObject";
 import { globalStyle, Container, CanvasContainer } from "./style";
 import { pageQuery } from "./fragment";
-import RippleBox from "../components/simple/RippleBox";
-import MovingCharacter from "../scenes/MovingCharacter/MovingCharacter";
+import Gallery from "../scenes/Gallery";
+import MovingCharacter from "../scenes/MovingCharacter";
+
 function Lights() {
   return (
     <group>
@@ -47,6 +40,7 @@ export default (props) => {
           onCreated={({ gl }) => {
             gl.toneMapping = THREE.ACESFilmicToneMapping;
             gl.outputEncoding = THREE.sRGBEncoding;
+            gl.setClearColor("black");
           }}
         >
           <FBXLoaderProvider>
@@ -54,7 +48,8 @@ export default (props) => {
               <CameraControl />
               <Lights />
               <CannonProvider debugRenderer={true}>
-                <MovingCharacter />
+                <Gallery />
+                {/* <MovingCharacter /> */}
               </CannonProvider>
             </GameProvider>
           </FBXLoaderProvider>

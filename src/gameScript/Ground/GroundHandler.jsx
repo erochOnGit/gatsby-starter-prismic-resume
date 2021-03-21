@@ -11,9 +11,11 @@ let GroundHandler = ({ children }) => {
 
   let onClick = (e) => {
     e.intersections[0].point.z = -9;
-    game.players[0].setDestinationMarker({
-      destination: e.intersections[0].point,
-    });
+
+    game.players[0] &&
+      game.players[0].setDestinationMarker({
+        destination: e.intersections[0].point,
+      });
   };
 
   useEffect(() => {

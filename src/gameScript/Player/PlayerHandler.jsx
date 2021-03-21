@@ -23,7 +23,7 @@ let PlayerHandler = ({ children }) => {
         )
       : "jeanmichel"
   );
-  
+
   const { destinationMarker, speed } = player;
   player.setDestinationMarker = useCallback(
     ({ destination }) => {
